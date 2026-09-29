@@ -51,6 +51,8 @@ import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.View;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.view.animation.AnimationUtils;
@@ -380,11 +382,27 @@ public class FingerprintEnrollEnrolling extends BiometricsEnrollEnrolling {
     @Override
     protected void onStart() {
         super.onStart();
+        hideNavigationBarForUdfps();
         setupScreenFoldCallbackWhenNecessary();
         updateProgress(false /* animate */);
         updateTitleAndDescription(true);
         if (mRestoring) {
             startIconAnimation();
+        }
+    }
+
+    // The under-display sensor sits right above the navigation bar, so a finger on the sensor
+    // easily touches the gesture handle or the nav buttons. Hide the bar while enrolling; a swipe
+    // from the edge still shows it transiently, and it comes back when the activity goes away.
+    private void hideNavigationBarForUdfps() {
+        if (!mCanAssumeUdfps) {
+            return;
+        }
+        final WindowInsetsController controller = getWindow().getInsetsController();
+        if (controller != null) {
+            controller.setSystemBarsBehavior(
+                    WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+            controller.hide(WindowInsets.Type.navigationBars());
         }
     }
 
