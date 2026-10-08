@@ -320,7 +320,7 @@ public class BatteryInfo {
                         BatteryManager.EXTRA_STATUS, BatteryManager.BATTERY_STATUS_UNKNOWN);
         info.isFastCharging =
                 BatteryStatus.getChargingSpeed(context, batteryBroadcast)
-                        == BatteryStatus.CHARGING_FAST;
+                        >= BatteryStatus.CHARGING_FAST;
         if (info.isLongLife) {
             info.isBatteryDefender =
                     FeatureFactory.getFeatureFactory()
