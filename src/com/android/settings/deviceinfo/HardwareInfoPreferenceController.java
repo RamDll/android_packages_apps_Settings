@@ -17,6 +17,8 @@ package com.android.settings.deviceinfo;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.SystemProperties;
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.preference.PreferenceScreen;
@@ -53,13 +55,14 @@ public class HardwareInfoPreferenceController extends BasePreferenceController {
     }
 
     public static String getDeviceModel() {
+        final String model = getModelName();
         FutureTask<String> msvSuffixTask = new FutureTask<>(() -> DeviceInfoUtils.getMsvSuffix());
 
         msvSuffixTask.run();
         try {
             // Wait for msv suffix value.
             final String msvSuffix = msvSuffixTask.get();
-            return Build.MODEL + msvSuffix;
+            return model + msvSuffix;
         } catch (ExecutionException e) {
             Log.e(TAG, "Execution error, so we only show model name");
         } catch (InterruptedException e) {
@@ -67,6 +70,15 @@ public class HardwareInfoPreferenceController extends BasePreferenceController {
         }
         // If we can't get an msv suffix value successfully,
         // it's better to return model name.
-        return Build.MODEL;
+        return model;
+    }
+
+    // Marketing name with the model number, e.g. "POCO M6 Pro (2312FPCA6G)".
+    private static String getModelName() {
+        final String marketName = SystemProperties.get("ro.product.marketname");
+        if (TextUtils.isEmpty(marketName) || marketName.equals(Build.MODEL)) {
+            return Build.MODEL;
+        }
+        return marketName + " (" + Build.MODEL + ")";
     }
 }
