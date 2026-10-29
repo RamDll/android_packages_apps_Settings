@@ -186,8 +186,4 @@
     <string name="battery_maximum_capacity">Maximum capacity</string>
     <string name="battery_maximum_capacity_summary">%1$d mAh (%2$d%%)</string>
     <string name="battery_maximum_capacity_not_available" translatable="false">@string/battery_cycle_count_not_available</string>
-
-    <!-- Developer options: MediaTek FPSGO frame reporting (emerald) -->
-    <string name="mtk_fpsgo_title">MediaTek frame boost (FPSGO)</string>
-    <string name="mtk_fpsgo_summary">Report app frames to the MediaTek CPU frame booster. Applies to an app when it restarts, to the whole system after a reboot</string>
 </resources>
