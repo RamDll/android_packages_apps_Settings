@@ -46,11 +46,14 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.Preference;
+import androidx.preference.TwoStatePreference;
 
 import com.android.settings.R;
 import com.android.settings.SettingsActivity;
 import com.android.settings.Utils;
 import com.android.settings.biometrics.IdentityCheckBiometricErrorDialog;
+import com.android.settings.core.PreferenceControllerMixin;
 import com.android.settings.dashboard.RestrictedDashboardFragment;
 import com.android.settings.development.autofill.AutofillCategoryController;
 import com.android.settings.development.autofill.AutofillLoggingLevelPreferenceController;
@@ -78,6 +81,7 @@ import com.android.settingslib.search.SearchIndexable;
 
 import com.google.android.setupcompat.util.WizardManagerHelper;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -584,6 +588,7 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
         controllers.add(new GameDefaultFrameRatePreferenceController(context));
         controllers.add(new ForceDarkPreferenceController(context));
         controllers.add(new ForceMSAAPreferenceController(context));
+        controllers.add(new MtkFpsgoPreferenceController(context));
         controllers.add(new HardwareOverlaysPreferenceController(context));
         controllers.add(new SimulateColorSpacePreferenceController(context));
         controllers.add(new UsbAudioRoutingPreferenceController(context));
@@ -633,6 +638,52 @@ public class DevelopmentSettingsDashboardFragment extends RestrictedDashboardFra
     @VisibleForTesting
     <T extends AbstractPreferenceController> T getDevelopmentOptionsController(Class<T> clazz) {
         return use(clazz);
+    }
+
+    /**
+     * emerald: reports app frames to MediaTek FPSGO (frame-aware CPU DVFS) from libgui. The device
+     * init script maps persist.sys.emerald.fpsgo to debug.lib_gui.mtk_fpsgo, which libgui reads
+     * once per process, so apps pick a change up when they restart. Shown only where the FPSGO
+     * ioctl node exists.
+     */
+    static class MtkFpsgoPreferenceController extends DeveloperOptionsPreferenceController
+            implements Preference.OnPreferenceChangeListener, PreferenceControllerMixin {
+        private static final String KEY = "mtk_fpsgo";
+        private static final String PROPERTY = "persist.sys.emerald.fpsgo";
+        private static final String NODE = "/proc/perfmgr/perf_ioctl";
+
+        MtkFpsgoPreferenceController(Context context) {
+            super(context);
+        }
+
+        @Override
+        public boolean isAvailable() {
+            return new File(NODE).exists();
+        }
+
+        @Override
+        public String getPreferenceKey() {
+            return KEY;
+        }
+
+        @Override
+        public boolean onPreferenceChange(Preference preference, Object newValue) {
+            SystemProperties.set(PROPERTY, (Boolean) newValue ? "1" : "0");
+            return true;
+        }
+
+        @Override
+        public void updateState(Preference preference) {
+            ((TwoStatePreference) mPreference).setChecked(
+                    SystemProperties.getBoolean(PROPERTY, false));
+        }
+
+        @Override
+        protected void onDeveloperOptionsSwitchDisabled() {
+            super.onDeveloperOptionsSwitchDisabled();
+            SystemProperties.set(PROPERTY, "0");
+            ((TwoStatePreference) mPreference).setChecked(false);
+        }
     }
 
     /**

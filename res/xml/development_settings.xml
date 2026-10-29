@@ -515,6 +515,11 @@
             android:summary="@string/force_msaa_summary" />
 
         <SwitchPreferenceCompat
+            android:key="mtk_fpsgo"
+            android:title="@string/mtk_fpsgo_title"
+            android:summary="@string/mtk_fpsgo_summary" />
+
+        <SwitchPreferenceCompat
             android:key="disable_overlays"
             android:title="@string/disable_overlays"
             android:summary="@string/disable_overlays_summary" />
