@@ -82,9 +82,12 @@ public class PeakRefreshRateListPreferenceController extends BasePreferenceContr
             Display.Mode[] modes = display.getSupportedModes();
             Arrays.sort(modes, (mode1, mode2) ->
                 Float.compare(mode2.getRefreshRate(), mode1.getRefreshRate()));
+            final float currentValue = Settings.System.getFloat(mContext.getContentResolver(),
+                    Settings.System.PEAK_REFRESH_RATE, getDefaultPeakRefreshRate());
             for (Display.Mode m : modes) {
                 if (m.getPhysicalWidth() == mode.getPhysicalWidth() &&
-                        m.getPhysicalHeight() == mode.getPhysicalHeight()) {
+                        m.getPhysicalHeight() == mode.getPhysicalHeight() &&
+                        !isHiddenRefreshRate(m.getRefreshRate(), currentValue)) {
                     mEntries.add(String.format("%.02fHz", m.getRefreshRate())
                             .replaceAll("[\\.,]00", ""));
                     mValues.add(mValues.isEmpty()
@@ -140,6 +143,16 @@ public class PeakRefreshRateListPreferenceController extends BasePreferenceContr
     @Override
     public void onStop() {
         mDeviceConfigDisplaySettings.stopListening();
+    }
+
+    private boolean isHiddenRefreshRate(float refreshRate, float currentValue) {
+        final int rate = Math.round(refreshRate);
+        if (rate == Math.round(currentValue)) return false;
+        for (int hidden :
+                mContext.getResources().getIntArray(R.array.config_hidden_refresh_rates)) {
+            if (hidden == rate) return true;
+        }
+        return false;
     }
 
     private float findPeakRefreshRate(Display.Mode[] modes) {

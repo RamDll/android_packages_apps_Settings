@@ -38,6 +38,10 @@
     <!-- Whether to show min refresh rate in display settings -->
     <bool name="config_show_min_refresh_rate_switch">false</bool>
 
+    <!-- Display mode refresh rates (Hz) left out of the peak and min refresh rate lists,
+         unless one of them is the current choice -->
+    <integer-array name="config_hidden_refresh_rates" />
+
     <!-- Whether Settings should open a separate camera preview during face enrollment -->
     <bool name="config_face_enroll_hal_owns_camera">false</bool>
 
