@@ -79,6 +79,8 @@
     <string name="unlock_scramble_pin_layout_summary">Переставлять кнопки ввода PIN-кода в случайном порядке</string>
     <string name="proximity_wake_title">Предотвращать случайное включение</string>
     <string name="proximity_wake_summary">Проверка датчика приближения перед включением экрана</string>
+    <string name="pocket_protection_title">Защита в кармане</string>
+    <string name="pocket_protection_summary">Не реагировать на касания экрана блокировки и не включать экран уведомлениями, когда датчик приближения закрыт</string>
     <string name="touchscreen_hovering_title">Наведение пальца</string>
     <string name="touchscreen_hovering_summary">Распознавать приближение пальца к экрану для событий наведения курсора в браузере или других приложениях</string>
     <string name="wake_when_plugged_or_unplugged_title">Включение при зарядке</string>

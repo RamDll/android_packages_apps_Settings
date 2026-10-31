@@ -253,6 +253,13 @@
             android:defaultValue="@*lineageos.platform:bool/config_proximityCheckOnWakeEnabledByDefault"
             settings:requiresConfig="@*lineageos.platform:bool/config_proximityCheckOnWake" />
 
+        <!-- Pocket protection: proximity sensor on the lock screen and around pulses (SystemUI) -->
+        <lineageos.preference.SecureSettingSwitchPreference
+            android:key="pocket_protection"
+            android:title="@string/pocket_protection_title"
+            android:summary="@string/pocket_protection_summary"
+            android:defaultValue="true" />
+
         <!-- Double tap to sleep -->
         <lineageos.preference.LineageSystemSettingSwitchPreference
             android:key="double_tap_sleep_gesture"
